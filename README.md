@@ -1,14 +1,19 @@
-# Reference documentation
-- How to
-  - [How to integrate Spring Boot 3, Spring Security, and Keycloak (developers.redhat.com)](https://developers.redhat.com/articles/2023/07/24/how-integrate-spring-boot-3-spring-security-and-keycloak)
-- Spring Security
-  - [Spring Security::OAuth2 Client::Access Protected Resources for the Current User (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html#oauth2-client-access-protected-resources-current-user)
-  - [Spring Security::OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html#oauth2-resource-server)
-  - [Spring Security::OAuth2 Resource Server::Bearer Tokens::Bearer Token Resolution (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/bearer-tokens.html#oauth2resourceserver-bearertoken-resolver)
-  - [Spring Security::OAuth2 Resource Server::JWT (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html)
-- Keycloak
-  - [Keycloak::Importing and Exporting Realms (keycloak.org)](https://www.keycloak.org/server/importExport)
-  - [Keycloak::Running Keycloak in a container (keycloak.org)](https://www.keycloak.org/server/containers)
+# Overview
+The goal of this project is to practice with the OAuth2 and OpenID Connect (OIDC) protocols together with Spring Security.
+This README is a reminder for me then collects notes about how to run the project with focus on my local configuration/context.
+
+# Project description
+This project is made of 3 components which implements OAuth2 actors:
+- keycloak: OAuth2 authorization server
+- spring-boot-oauth2-client: OAuth2 client implemented with Spring Boot + Spring Security
+- spring-boot-oauth2-resource-server: OAuth2 resource-server implemented with Spring Boot + Spring Security
+
+All resources exposed by the client are protected.
+Any request to the client triggers the OIDC login with Keycloak identity provider.
+In this way the client issues an access_token and id_token.
+The client call the resource-server providing in input the access_token in a specifict HTTP header-.
+The resource-server relies on the authorization server to validate the access_token.
+If the access_token is not valid it returns HTTP 401 or 403 otherwise it continue with his business logic and returns.
 
 # Keycloak
 ## Start Keycloak with the default image
@@ -45,27 +50,27 @@ To apply the configuration to the image:
 1. copy files from /mnt/c/Users/daniele.zirpoli/tmp to ./keycloak/import
 2. build the image
 
-## Run Docker Compose
+# Run Docker Compose
 Docker runs in a [Multipass](https://multipass.run/) VM reachable via a private IP.
 In the docker-compose.yml the AUTH_SERVER_URL environment variable points to that VM private IP because it will be used to redirect the user to the login page in the authentication process.
 Then before building the compose you need to update the private IP with the one actually in use.
-### Build compose
+## Build compose
 This will build services
 ```shell
 $ docker compose -f /home/ubuntu/workspace/spring-boot-oauth2/docker-compose.yml build
 ```
-### Start compose
+## Start compose
 This will create and start containers
 ```shell
 $ docker compose -f /home/ubuntu/workspace/spring-boot-oauth2/docker-compose.yml up
 ```
-### Stop compose
+## Stop compose
 This will stop and remove containers, networks
 ```shell
 $ docker compose -f /home/ubuntu/workspace/spring-boot-oauth2/docker-compose.yml down
 ```
 
-## Test
+# Test
 1. Once the compose is up, with any internet browser go to any resource exposed by the client
 (eg. http://172.19.228.54:8081/v1/client/permissions/check/feign).
 2. It will redirect to the Keycloak login page.
@@ -73,3 +78,15 @@ $ docker compose -f /home/ubuntu/workspace/spring-boot-oauth2/docker-compose.yml
    1. username danzir (password: danzir) -> my-role-1 and my-role-2
    2. username marros (password: marros) -> only my-role-1
 4. The client call the backend and returns a response
+
+# Reference documentation
+- How to
+    - [How to integrate Spring Boot 3, Spring Security, and Keycloak (developers.redhat.com)](https://developers.redhat.com/articles/2023/07/24/how-integrate-spring-boot-3-spring-security-and-keycloak)
+- Spring Security
+    - [Spring Security::OAuth2 Client::Access Protected Resources for the Current User (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html#oauth2-client-access-protected-resources-current-user)
+    - [Spring Security::OAuth2 Resource Server](https://docs.spring.io/spring-security/reference/servlet/oauth2/index.html#oauth2-resource-server)
+    - [Spring Security::OAuth2 Resource Server::Bearer Tokens::Bearer Token Resolution (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/bearer-tokens.html#oauth2resourceserver-bearertoken-resolver)
+    - [Spring Security::OAuth2 Resource Server::JWT (docs.spring.io)](https://docs.spring.io/spring-security/reference/servlet/oauth2/resource-server/jwt.html)
+- Keycloak
+    - [Keycloak::Importing and Exporting Realms (keycloak.org)](https://www.keycloak.org/server/importExport)
+    - [Keycloak::Running Keycloak in a container (keycloak.org)](https://www.keycloak.org/server/containers)
