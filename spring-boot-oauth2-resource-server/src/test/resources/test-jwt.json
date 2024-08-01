@@ -1,0 +1,30 @@
+{
+  "exp": 1721915485,
+  "iat": 1721915185,
+  "auth_time": 1721914474,
+  "jti": "e472c6e4-a980-4e16-b631-673aa78fbbb4",
+  "iss": "http://localhost:8080/realms/External",
+  "sub": "f157bf80-822d-47d2-94dd-e0bc54fa62f3",
+  "typ": "Bearer",
+  "azp": "external-client",
+  "sid": "12d76688-6b6a-465d-a2ab-cc2030fdcffe",
+  "acr": "0",
+  "allowed-origins": [
+    "http://localhost:8081"
+  ],
+  "realm_access": {
+    "roles": [
+      "offline_access",
+      "default-roles-external",
+      "my-role-1",
+      "uma_authorization"
+    ]
+  },
+  "scope": "openid email profile",
+  "email_verified": true,
+  "name": "mario rossi",
+  "preferred_username": "marros",
+  "given_name": "mario",
+  "family_name": "rossi",
+  "email": "marros@email.com"
+}

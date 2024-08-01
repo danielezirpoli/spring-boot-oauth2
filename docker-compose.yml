@@ -1,0 +1,39 @@
+name: spring-boot-oauth2
+services:
+  auth-server:
+    build:
+      context: ./keycloak
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+      - 8443:8443
+    healthcheck:
+      test: bash healthcheck-script.sh || exit 1
+      interval: 5s
+      timeout: 10s
+      retries: 10
+    container_name: my-keycloak-exercise
+  client:
+    build:
+      context: ./spring-boot-oauth2-client
+      dockerfile: Dockerfile
+    ports:
+      - 8081:8081
+    container_name: my-oauth2-client-exercise
+    depends_on:
+      auth-server:
+        condition: service_healthy
+    environment:
+      - AUTH_SERVER_URL=http://172.19.228.54:8080
+      - RESOURCE_SERVER_URL=http://resource-server:8082
+  resource-server:
+    build:
+      context: ./spring-boot-oauth2-resource-server
+      dockerfile: Dockerfile
+    ports:
+      - 8082:8082
+    container_name: my-oauth2-resource-server-exercise
+    depends_on:
+      - auth-server
+    environment:
+      - AUTH_SERVER_URL=http://172.19.228.54:8080
